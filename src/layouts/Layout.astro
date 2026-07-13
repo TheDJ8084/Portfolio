@@ -6,33 +6,100 @@ export interface Props {
 	description?: string;
 }
 
-const { title, description = "A modern portfolio showcasing my work." } = Astro.props;
+const { title, description = "Lighting, Audio, and Video Engineering" } = Astro.props;
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL}/favicon.svg`} />
 		<meta name="generator" content={Astro.generator} />
-		
-		<!-- SEO Best Practices -->
 		<title>{title}</title>
 		<meta name="description" content={description} />
 		
-		<!-- Open Graph / Facebook -->
+		<!-- Open Graph / Social -->
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
-		
-		<!-- Twitter -->
 		<meta property="twitter:card" content="summary_large_image" />
 		<meta property="twitter:title" content={title} />
 		<meta property="twitter:description" content={description} />
 	</head>
-	<body>
-		<slot />
-	</body>
+  <body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor-follower" id="custom-cursor-follower"></div>
+
+    <slot />
+
+    <script>
+      import Lenis from 'lenis';
+
+      // Initialize Lenis Smooth Scroll
+      const lenis = new Lenis({
+        autoRaf: true,
+      });
+
+      // Scroll Restoration Fix
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+
+      // Custom Cursor Logic
+      const follower = document.getElementById('custom-cursor-follower');
+      
+      let mouseX = 0, mouseY = 0;
+      let followerX = 0, followerY = 0;
+
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      function animate() {
+        followerX += (mouseX - followerX) * 0.2;
+        followerY += (mouseY - followerY) * 0.2;
+        if (follower) {
+          follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      // Add hovering class on interactive elements
+      document.querySelectorAll('a, button, .hover-lift, .project-item').forEach(el => {
+        el.addEventListener('mouseenter', () => follower?.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => follower?.classList.remove('hovering'));
+      });
+    </script>
+  </body>
 </html>
+
+<style is:global>
+  /* Custom Cursor */
+  * {
+    cursor: none !important; /* Hide default cursor everywhere */
+  }
+  .custom-cursor-follower {
+    position: fixed;
+    top: 0; left: 0;
+    width: 20px; height: 20px;
+    background-color: #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    mix-blend-mode: difference;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+  }
+  .custom-cursor-follower.hovering {
+    width: 80px; height: 80px;
+  }
+  
+  @media (max-width: 768px) {
+    * { cursor: auto !important; }
+    .custom-cursor-follower { display: none; }
+  }
+</style>

@@ -1,21 +1,15 @@
----
----
 <section class="hero">
   <div class="hero-content">
-    <h1 class="animate-fade-in">
-      Hi, I'm <span class="text-gradient">Luka Ramp</span>
-    </h1>
-    <p class="subtitle animate-fade-in delay-100">
-      Professional Lighting, Audio, and Video Engineer bringing events to life.
-    </p>
-    <div class="actions animate-fade-in delay-200">
-      <a href="#projects" class="btn btn-primary hover-lift">View My Work</a>
-      <a href="#contact" class="btn btn-secondary hover-lift">Get In Touch</a>
+    <div class="kinetic-line">
+      <h1 class="kinetic-text" data-speed="-1">LUKA</h1>
     </div>
-  </div>
-  <div class="hero-bg animate-fade-in delay-300">
-    <div class="glow glow-1"></div>
-    <div class="glow glow-2"></div>
+    <div class="kinetic-line">
+      <h1 class="kinetic-text outline" data-speed="1">RAMP</h1>
+    </div>
+    <div class="hero-footer">
+      <p class="subtitle fade-up">Lighting, Audio, and Video Engineer</p>
+      <p class="subtitle right fade-up">Based in the Netherlands</p>
+    </div>
   </div>
 </section>
 
@@ -23,108 +17,113 @@
   .hero {
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
     position: relative;
-    padding: 0 2rem;
+    padding: 0;
     overflow: hidden;
   }
 
   .hero-content {
-    text-align: center;
-    z-index: 10;
-    max-width: 800px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
 
-  h1 {
-    font-size: clamp(3rem, 8vw, 5.5rem);
-    letter-spacing: -0.03em;
-    margin-bottom: 1.5rem;
+  .kinetic-line {
+    width: 100vw;
+    display: flex;
+    white-space: nowrap;
+    overflow: visible;
+  }
+
+  .kinetic-text {
+    font-size: var(--text-kinetic);
+    font-weight: 900;
+    line-height: 0.8;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+    padding: 0 5vw;
+  }
+
+  .kinetic-text.outline {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--text-muted);
+  }
+
+  .hero-footer {
+    position: absolute;
+    bottom: 10vh;
+    left: 5vw;
+    right: 5vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
   }
 
   .subtitle {
-    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
     color: var(--text-muted);
-    margin-bottom: 3rem;
-    max-width: 600px;
-    margin-inline: auto;
+    max-width: 300px;
   }
 
-  .actions {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
+  .subtitle.right {
+    text-align: right;
   }
 
-  .btn {
-    padding: 1rem 2rem;
-    border-radius: 99px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-  }
-
-  .btn-primary {
-    background: var(--accent-gradient);
-    color: #fff;
-    border: none;
-  }
-
-  .btn-secondary {
-    background: var(--glass-bg);
-    color: var(--text-color);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-  }
-
-  .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  /* Abstract background glowing orbs */
-  .hero-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  .glow {
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.4;
-    animation: float 20s infinite alternate ease-in-out;
-  }
-
-  .glow-1 {
-    background: var(--accent-primary);
-    top: -10%;
-    right: -10%;
-  }
-
-  .glow-2 {
-    background: var(--accent-secondary);
-    bottom: -10%;
-    left: -10%;
-    animation-delay: -10s;
-  }
-
-  @keyframes float {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(-100px, 50px) scale(1.2); }
-  }
-
-  @media (max-width: 600px) {
-    .actions {
+  @media (max-width: 768px) {
+    .hero-footer {
       flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .subtitle.right {
+      text-align: left;
     }
   }
 </style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Initial load animation
+  gsap.from('.kinetic-line', {
+    y: 100,
+    opacity: 0,
+    duration: 1.5,
+    stagger: 0.2,
+    ease: 'power4.out',
+  });
+
+  gsap.from('.fade-up', {
+    y: 30,
+    opacity: 0,
+    duration: 1,
+    stagger: 0.2,
+    ease: 'power3.out',
+    delay: 0.5
+  });
+
+  // Kinetic scroll physics
+  const kineticTexts = document.querySelectorAll('.kinetic-text');
+  
+  kineticTexts.forEach((text) => {
+    const speed = text.getAttribute('data-speed') || 1;
+    gsap.to(text, {
+      x: () => `${50 * Number(speed)}vw`,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1, // Smooth scrubbing
+      }
+    });
+  });
+</script>

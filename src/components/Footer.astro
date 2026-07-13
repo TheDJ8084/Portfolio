@@ -1,119 +1,178 @@
 ---
+import { getEntry } from 'astro:content';
+import Icon from './Icon.astro';
+
 const currentYear = new Date().getFullYear();
+
+const settingsEntry = await getEntry('settings', 'settings');
+const settings = settingsEntry?.data || {
+  email: 'hello@example.com',
+  github: 'https://github.com/TheDJ8084',
+  linkedin: '',
+  youtube: ''
+};
+
+const safeUrl = (url: string) => {
+  if (!url) return '';
+  return url.startsWith('http') ? url : `https://${url}`;
+};
 ---
 <footer id="contact" class="footer">
   <div class="container">
-    <div class="footer-content glass-panel">
-      <div class="info">
-        <h2>Let's build something <span class="text-gradient">amazing</span> together.</h2>
-        <p>Currently available for freelance opportunities.</p>
-        <a href="mailto:hello@example.com" class="email-link hover-lift">hello@example.com</a>
+    <div class="footer-content">
+      <div class="contact-info animate-fade-in">
+        <h2 class="massive-text">Let's Talk.</h2>
+        <p class="subtitle">Currently available for freelance projects and collaborations.</p>
+        {settings.email && (
+          <a href={`mailto:${settings.email}`} class="email-link">
+            {settings.email}
+            <Icon name="arrow-up-right" size={24} class="arrow-icon" />
+          </a>
+        )}
       </div>
-      <div class="socials">
-        <a href="https://github.com/TheDJ8084" target="_blank" rel="noopener noreferrer" class="social-link hover-lift">GitHub</a>
-        <a href="#" target="_blank" rel="noopener noreferrer" class="social-link hover-lift">LinkedIn</a>
-        <a href="#" target="_blank" rel="noopener noreferrer" class="social-link hover-lift">Twitter</a>
+      <div class="social-links animate-fade-in delay-100">
+        <span class="social-label">Connect</span>
+        {settings.github && <a href={safeUrl(settings.github)} target="_blank" rel="noopener noreferrer" class="social-link">GitHub</a>}
+        {settings.linkedin && <a href={safeUrl(settings.linkedin)} target="_blank" rel="noopener noreferrer" class="social-link">LinkedIn</a>}
+        {settings.youtube && <a href={safeUrl(settings.youtube)} target="_blank" rel="noopener noreferrer" class="social-link">YouTube</a>}
       </div>
     </div>
     <div class="bottom-bar">
       <p>&copy; {currentYear} Luka Ramp. All rights reserved.</p>
+      <a href="#top" class="back-to-top">Back to Top <Icon name="arrow-up" size={16} /></a>
     </div>
   </div>
 </footer>
 
 <style>
   .footer {
-    padding: 4rem 2rem 2rem;
+    padding: 10vh 5vw 5vh;
+    background-color: var(--bg-color);
     position: relative;
     z-index: 10;
   }
 
   .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
   }
 
   .footer-content {
-    padding: 4rem;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
-    gap: 3rem;
-    margin-bottom: 3rem;
+    align-items: flex-end;
+    gap: 4rem;
+    margin-bottom: 8vh;
   }
 
-  .info {
+  .contact-info {
     flex: 1;
     min-width: 300px;
   }
 
-  h2 {
-    font-size: clamp(2rem, 4vw, 3rem);
+  .massive-text {
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 1;
+    font-weight: 800;
     margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
     max-width: 500px;
   }
 
-  p {
-    color: var(--text-muted);
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-  }
-
   .email-link {
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 700;
     color: var(--text-color);
-    border-bottom: 2px solid var(--accent-primary);
-    padding-bottom: 0.2rem;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    transition: color 0.4s ease;
   }
 
   .email-link:hover {
     color: var(--accent-primary);
   }
 
-  .socials {
+  .arrow-icon {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .email-link:hover .arrow-icon {
+    transform: translate(5px, -5px);
+  }
+
+  .social-links {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
+    min-width: 200px;
+  }
+
+  .social-label {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
   }
 
   .social-link {
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    transition: var(--transition-smooth);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease;
+    display: inline-block;
   }
 
   .social-link:hover {
-    color: var(--accent-secondary);
-    transform: translateX(5px);
+    color: var(--accent-primary);
+    transform: translateX(10px);
   }
 
   .bottom-bar {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding-top: 2rem;
-    border-top: 1px solid var(--glass-border);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-muted);
+    font-family: var(--font-mono);
     font-size: 0.9rem;
+    text-transform: uppercase;
   }
 
-  @media (max-width: 768px) {
+  .back-to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
+  }
+
+  .back-to-top:hover {
+    color: var(--accent-primary);
+  }
+
+  @media (max-width: 900px) {
     .footer-content {
-      padding: 2rem;
       flex-direction: column;
-      text-align: center;
+      align-items: flex-start;
+      gap: 3rem;
     }
     
-    .socials {
-      flex-direction: row;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .social-link:hover {
-      transform: translateY(-5px);
+    .bottom-bar {
+      flex-direction: column-reverse;
+      gap: 1.5rem;
+      text-align: center;
     }
   }
 </style>

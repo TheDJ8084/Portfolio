@@ -1,65 +1,124 @@
----
----
-<header class="header animate-fade-in">
-  <div class="container glass-panel">
-    <a href="/Portfolio" class="logo text-gradient">Luka Ramp</a>
-    <nav class="nav-links">
-      <a href="#about" class="nav-link hover-lift">About</a>
-      <a href="#projects" class="nav-link hover-lift">Projects</a>
-      <a href="#contact" class="nav-link hover-lift">Contact</a>
-    </nav>
-  </div>
+<header class="dynamic-island">
+  <nav class="island-nav">
+    <a href={`${import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL}/`} class="island-logo">
+      <span class="dot"></span>
+    </a>
+    <div class="island-links">
+      <a href={`${import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL}/#projects`} class="magnetic">Work</a>
+      <a href={`${import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL}/#about`} class="magnetic">About</a>
+      <a href={`${import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL}/#contact`} class="magnetic">Contact</a>
+    </div>
+  </nav>
 </header>
 
 <style>
-  .header {
+  .dynamic-island {
     position: fixed;
-    top: 2rem;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: center;
-    padding: 0 1rem;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    background: rgba(10, 10, 12, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 100px;
+    padding: 0.5rem 0.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  
-  .container {
+
+  .island-nav {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    max-width: 1200px;
-    padding: 1rem 2rem;
+    gap: 1.5rem;
   }
 
-  .logo {
-    font-family: var(--font-heading);
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
-
-  .nav-links {
+  .island-logo {
     display: flex;
-    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--text-color);
+    border-radius: 50%;
+    color: var(--bg-color);
+    font-weight: 900;
+    transition: transform 0.3s ease;
   }
 
-  .nav-link {
-    font-size: 0.95rem;
+  .island-logo:hover {
+    transform: scale(1.1);
+  }
+
+  .island-logo .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--bg-color);
+    border-radius: 50%;
+  }
+
+  .island-links {
+    display: flex;
+    gap: 0.5rem;
+    padding-right: 1rem;
+  }
+
+  .island-links a {
+    color: var(--text-muted);
+    font-size: 0.9rem;
     font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    transition: color 0.3s ease, background 0.3s ease;
+  }
+
+  .island-links a:hover {
     color: var(--text-color);
-    transition: var(--transition-smooth);
-    opacity: 0.8;
+    background: rgba(255, 255, 255, 0.05);
   }
 
-  .nav-link:hover {
-    opacity: 1;
-    color: var(--accent-primary);
-  }
-
-  @media (max-width: 768px) {
-    .nav-links {
-      display: none; /* Hide on mobile for now, can be expanded later */
+  @media (max-width: 600px) {
+    .dynamic-island {
+      bottom: 1rem;
+      width: 90%;
+      padding: 0.5rem;
+      justify-content: space-between;
+    }
+    .island-nav {
+      justify-content: space-between;
+      width: 100%;
     }
   }
 </style>
+
+<script>
+  import gsap from 'gsap';
+  
+  // Magnetic UI Logic
+  const magneticEls = document.querySelectorAll('.magnetic');
+  
+  magneticEls.forEach((el) => {
+    el.addEventListener('mousemove', (e: any) => {
+      const position = el.getBoundingClientRect();
+      const x = e.clientX - position.left - position.width / 2;
+      const y = e.clientY - position.top - position.height / 2;
+      
+      gsap.to(el, {
+        x: x * 0.4,
+        y: y * 0.4,
+        duration: 0.5,
+        ease: 'power3.out'
+      });
+    });
+
+    el.addEventListener('mouseleave', () => {
+      gsap.to(el, {
+        x: 0,
+        y: 0,
+        duration: 0.5,
+        ease: 'elastic.out(1, 0.3)'
+      });
+    });
+  });
+</script>

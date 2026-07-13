@@ -29,8 +29,19 @@ const tagsCollection = defineCollection({
   }),
 });
 
+const settingsCollection = defineCollection({
+  loader: glob({ pattern: "**/*.json", base: "./src/content/settings" }),
+  schema: z.object({
+    email: z.string().optional(),
+    github: z.string().optional().or(z.literal('')),
+    linkedin: z.string().optional().or(z.literal('')),
+    youtube: z.string().optional().or(z.literal('')),
+  }),
+});
+
 export const collections = {
   'projects': projectsCollection,
   'about': aboutCollection,
   'tags': tagsCollection,
+  'settings': settingsCollection,
 };

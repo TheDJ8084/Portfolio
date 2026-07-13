@@ -1,6 +1,7 @@
 ---
 import { getCollection, render, getEntry } from 'astro:content';
 import { Image } from 'astro:assets';
+import Icon from '../../components/Icon.astro';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
@@ -31,6 +32,12 @@ const tags = await Promise.all(
   <Header />
   <main class="project-page">
     <article class="container">
+      <div class="back-link-wrapper">
+        <a href={`${import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL}/#projects`} class="back-link hover-lift">
+          <Icon name="arrow-left" size={16} class="arrow-icon" /> Back to Projects
+        </a>
+      </div>
+
       <div class="hero-image glass-panel animate-fade-in">
         {heroImage ? (
           <Image src={heroImage} alt={project.data.title} />
@@ -38,21 +45,22 @@ const tags = await Promise.all(
           <div class="image-placeholder">No Hero Image Uploaded</div>
         )}
       </div>
-      
       <div class="project-header animate-fade-in delay-100">
-        <h1 class="text-gradient">{project.data.title}</h1>
-        {project.data.startDate && (
-          <p class="project-date">
-            {new Date(project.data.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-            {project.data.endDate ? ` - ${new Date(project.data.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}` : ' - Present'}
-          </p>
-        )}
-        <div class="tags">
-          {tags.map(tag => (
-            <span class="tag">{tag}</span>
-          ))}
+        <div class="project-meta">
+          {project.data.startDate && (
+            <span class="project-date">
+              {new Date(project.data.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
+              {project.data.endDate ? ` — ${new Date(project.data.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}` : ' — Present'}
+            </span>
+          )}
+          <div class="tags">
+            {tags.map(tag => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
         </div>
-        <p class="description">{project.data.description}</p>
+        <h1 class="massive-project-title">{project.data.title}</h1>
+        {project.data.description && <p class="description">{project.data.description}</p>}
       </div>
 
       <div class="content glass-panel animate-fade-in delay-200">
@@ -231,43 +239,55 @@ const tags = await Promise.all(
 
   .project-header {
     margin-bottom: 4rem;
-    text-align: center;
+    text-align: left;
   }
 
-  h1 {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    margin-bottom: 1rem;
+  .project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono);
   }
 
   .project-date {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
-    font-weight: 500;
+    font-size: 1rem;
+    color: var(--accent-primary);
+    font-weight: 700;
+    text-transform: uppercase;
   }
 
   .tags {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 0.5rem;
-    margin-bottom: 2rem;
   }
 
   .tag {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 0.4rem 0.8rem;
-    border-radius: 99px;
-    font-size: 0.9rem;
-    font-weight: 500;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--text-color);
+    text-transform: uppercase;
+  }
+
+  .massive-project-title {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+    margin: 0 0 2rem 0;
+    letter-spacing: -0.02em;
     color: var(--text-color);
   }
 
   .description {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     color: var(--text-muted);
-    max-width: 700px;
-    margin: 0 auto;
+    max-width: 800px;
     line-height: 1.6;
   }
 

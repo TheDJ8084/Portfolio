@@ -27,6 +27,17 @@ export default config({
         content: fields.markdoc({ label: 'Content' }),
       },
     }),
+    settings: singleton({
+      label: 'Site Settings',
+      path: 'src/content/settings/settings',
+      format: { data: 'json' },
+      schema: {
+        email: fields.text({ label: 'Email Address' }),
+        github: fields.url({ label: 'GitHub URL' }),
+        linkedin: fields.url({ label: 'LinkedIn URL' }),
+        youtube: fields.url({ label: 'YouTube URL' }),
+      },
+    }),
   },
   collections: {
     projects: collection({
