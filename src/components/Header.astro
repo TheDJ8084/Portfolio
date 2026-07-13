@@ -1,0 +1,65 @@
+---
+---
+<header class="header animate-fade-in">
+  <div class="container glass-panel">
+    <a href="/Portfolio" class="logo text-gradient">Luka Ramp</a>
+    <nav class="nav-links">
+      <a href="#about" class="nav-link hover-lift">About</a>
+      <a href="#projects" class="nav-link hover-lift">Projects</a>
+      <a href="#contact" class="nav-link hover-lift">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: fixed;
+    top: 2rem;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    padding: 0 1rem;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 1rem 2rem;
+  }
+
+  .logo {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .nav-link {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+    transition: var(--transition-smooth);
+    opacity: 0.8;
+  }
+
+  .nav-link:hover {
+    opacity: 1;
+    color: var(--accent-primary);
+  }
+
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none; /* Hide on mobile for now, can be expanded later */
+    }
+  }
+</style>

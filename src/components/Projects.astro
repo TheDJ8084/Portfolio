@@ -1,0 +1,147 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+
+const allProjects = await getCollection('projects');
+const projects = allProjects.sort((a, b) => {
+  const dateA = a.data.startDate ? new Date(a.data.startDate).getTime() : 0;
+  const dateB = b.data.startDate ? new Date(b.data.startDate).getTime() : 0;
+  return dateB - dateA;
+});
+---
+<section id="projects" class="projects-section">
+  <div class="container">
+    <h2 class="section-title">Selected <span class="text-gradient">Projects</span></h2>
+    <div class="projects-grid">
+      {projects.map((project, index) => {
+        const baseUrl = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL;
+        return (
+        <a href={`${baseUrl}/projects/${project.id}`} class={`project-card glass-panel hover-lift delay-${(index + 1) * 100} animate-fade-in`} style="text-decoration: none;">
+          <div class="image-wrapper">
+            {project.data.image ? (
+              <Image src={project.data.image} alt={project.data.title} />
+            ) : (
+              <div class="image-placeholder">No Image Uploaded</div>
+            )}
+          </div>
+          <div class="content">
+            <h3>{project.data.title}</h3>
+            {project.data.startDate && (
+              <p class="project-date">
+                {new Date(project.data.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
+                {project.data.endDate ? ` - ${new Date(project.data.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}` : ' - Present'}
+              </p>
+            )}
+            <p>{project.data.description}</p>
+            <div class="tags">
+              {project.data.tags.map(tag => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          </div>
+        </a>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .projects-section {
+    padding: 8rem 2rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+  }
+
+  .project-card {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .image-wrapper {
+    height: 240px;
+    overflow: hidden;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .project-card:hover .image-wrapper img {
+    transform: scale(1.05);
+  }
+
+  .content {
+    padding: 2rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+  }
+
+  .project-date {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+</style>

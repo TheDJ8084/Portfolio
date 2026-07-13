@@ -1,0 +1,224 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map(project => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const heroImage = project.data.image;
+const galleryImages = project.data.gallery || [];
+---
+
+<Layout title={`${project.data.title} | Luka Ramp`} description={project.data.description}>
+  <Header />
+  <main class="project-page">
+    <article class="container">
+      <div class="hero-image glass-panel animate-fade-in">
+        {heroImage ? (
+          <Image src={heroImage} alt={project.data.title} />
+        ) : (
+          <div class="image-placeholder">No Hero Image Uploaded</div>
+        )}
+      </div>
+      
+      <div class="project-header animate-fade-in delay-100">
+        <h1 class="text-gradient">{project.data.title}</h1>
+        {project.data.startDate && (
+          <p class="project-date">
+            {new Date(project.data.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            {project.data.endDate ? ` - ${new Date(project.data.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}` : ' - Present'}
+          </p>
+        )}
+        <div class="tags">
+          {project.data.tags.map(tag => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+        <p class="description">{project.data.description}</p>
+      </div>
+
+      <div class="content glass-panel animate-fade-in delay-200">
+        <Content />
+      </div>
+
+      {galleryImages.length > 0 && (
+        <div class="gallery-section animate-fade-in delay-300">
+          <h2>Project Gallery</h2>
+          <div class="gallery-grid">
+            {galleryImages.map((img, idx) => (
+              <div class="gallery-item glass-panel">
+                <Image src={img} alt={`${project.data.title} gallery image ${idx + 1}`} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </article>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .project-page {
+    padding: 8rem 2rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .hero-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 1rem;
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+  }
+
+  .gallery-section {
+    margin-top: 4rem;
+  }
+
+  .gallery-section h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--text-color);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .gallery-item {
+    aspect-ratio: 4 / 3;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .gallery-item:hover img {
+    transform: scale(1.05);
+  }
+
+  .project-header {
+    margin-bottom: 4rem;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    margin-bottom: 1rem;
+  }
+
+  .project-date {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .tag {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: 99px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+
+  .description {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .content {
+    padding: 3rem;
+    border-radius: 1rem;
+  }
+
+  .content :global(h2) {
+    font-size: 2rem;
+    margin: 2rem 0 1rem;
+    color: var(--text-color);
+  }
+
+  .content :global(h3) {
+    font-size: 1.5rem;
+    margin: 1.5rem 0 1rem;
+    color: var(--text-color);
+  }
+
+  .content :global(p) {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .content :global(ul) {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    color: var(--text-muted);
+  }
+
+  .content :global(li) {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+
+  .content :global(strong) {
+    color: var(--text-color);
+  }
+</style>
