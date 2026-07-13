@@ -5,9 +5,9 @@ const projectsCollection = defineCollection({
   loader: glob({ pattern: "**/*.mdoc", base: "./src/content/projects" }),
   schema: ({ image }) => z.object({
     title: z.string(),
-    startDate: z.string().optional(),
-    endDate: z.string().optional(),
-    description: z.string(),
+    startDate: z.coerce.date().optional(),
+    endDate: z.coerce.date().optional(),
+    description: z.string().optional(),
     image: image().optional(),
     gallery: z.array(image()).optional(),
     tags: z.array(z.string()),
@@ -22,7 +22,15 @@ const aboutCollection = defineCollection({
   }),
 });
 
+const tagsCollection = defineCollection({
+  loader: glob({ pattern: "**/*.json", base: "./src/content/tags" }),
+  schema: z.object({
+    name: z.string(),
+  }),
+});
+
 export const collections = {
   'projects': projectsCollection,
   'about': aboutCollection,
+  'tags': tagsCollection,
 };

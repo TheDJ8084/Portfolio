@@ -1,9 +1,16 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 
+const isProd = import.meta.env.PROD;
+
 export default config({
-  storage: {
-    kind: 'local',
-  },
+  storage: isProd 
+    ? {
+        kind: 'github',
+        repo: 'TheDJ8084/Portfolio'
+      }
+    : {
+        kind: 'local'
+      },
   singletons: {
     about: singleton({
       label: 'About Me',
@@ -46,10 +53,23 @@ export default config({
           { label: 'Image Gallery', itemLabel: props => props.value ? 'Image' : 'Empty Image' }
         ),
         tags: fields.array(
-          fields.text({ label: 'Tag' }),
-          { label: 'Tags', itemLabel: props => props.value }
+          fields.relationship({
+            label: 'Tag',
+            collection: 'tags',
+            validation: { isRequired: true }
+          }),
+          { label: 'Tags', itemLabel: props => props.value || 'Tag' }
         ),
         content: fields.markdoc({ label: 'Content' }),
+      },
+    }),
+    tags: collection({
+      label: 'Tags',
+      slugField: 'name',
+      path: 'src/content/tags/*',
+      format: { data: 'json' },
+      schema: {
+        name: fields.slug({ name: { label: 'Name' } }),
       },
     }),
   },
