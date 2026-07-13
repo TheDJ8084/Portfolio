@@ -13,7 +13,7 @@ export default defineConfig({
   integrations: [
     react(), 
     markdoc(), 
-    ...(isBuild ? [] : [keystatic()])
+    keystatic()
   ],
   output: 'static'
 });
