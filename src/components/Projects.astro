@@ -44,9 +44,6 @@ function formatDate(date: any) {
             )}
           </div>
           <h3 class="card-title">{project.data.title}</h3>
-          {project.data.description && (
-            <p class="card-description">{project.data.description}</p>
-          )}
         </div>
       </a>
     ))}
@@ -171,17 +168,6 @@ function formatDate(date: any) {
 
   .project-card:hover .card-title {
     color: var(--accent-primary);
-  }
-
-  .card-description {
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-    margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 
   @media (max-width: 768px) {

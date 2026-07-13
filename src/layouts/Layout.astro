@@ -34,54 +34,67 @@ const { title, description = "Lighting, Audio, and Video Engineering" } = Astro.
     <slot />
 
     <script>
+      // Custom Cursor Logic - Isolated to prevent crashes from external libraries
+      try {
+        const follower = document.getElementById('custom-cursor-follower');
+        if (follower) {
+          // Enable cursor hiding only if script runs successfully
+          document.body.classList.add('custom-cursor-active');
+
+          let mouseX = 0, mouseY = 0;
+          let followerX = 0, followerY = 0;
+
+          document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+          });
+
+          function animateCursor() {
+            followerX += (mouseX - followerX) * 0.2;
+            followerY += (mouseY - followerY) * 0.2;
+            follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
+            requestAnimationFrame(animateCursor);
+          }
+          animateCursor();
+
+          // Add hovering class on interactive elements
+          document.querySelectorAll('a, button, .hover-lift, .project-item').forEach(el => {
+            el.addEventListener('mouseenter', () => follower.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => follower.classList.remove('hovering'));
+          });
+        }
+      } catch (e) {
+        console.error("Cursor script error:", e);
+      }
+    </script>
+
+    <script>
       import Lenis from 'lenis';
 
-      // Initialize Lenis Smooth Scroll
-      const lenis = new Lenis({
-        autoRaf: true,
-      });
+      try {
+        // Initialize Lenis Smooth Scroll
+        const lenis = new Lenis({
+          autoRaf: true,
+        });
 
-      // Scroll Restoration Fix
-      if ('scrollRestoration' in history) {
-        history.scrollRestoration = 'manual';
-      }
-      window.scrollTo(0, 0);
-
-      // Custom Cursor Logic
-      const follower = document.getElementById('custom-cursor-follower');
-      
-      let mouseX = 0, mouseY = 0;
-      let followerX = 0, followerY = 0;
-
-      document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-      });
-
-      function animate() {
-        followerX += (mouseX - followerX) * 0.2;
-        followerY += (mouseY - followerY) * 0.2;
-        if (follower) {
-          follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
+        // Scroll Restoration Fix
+        if ('scrollRestoration' in history) {
+          history.scrollRestoration = 'manual';
         }
-        requestAnimationFrame(animate);
+        window.scrollTo(0, 0);
+      } catch (e) {
+        console.error("Lenis script error:", e);
       }
-      animate();
-
-      // Add hovering class on interactive elements
-      document.querySelectorAll('a, button, .hover-lift, .project-item').forEach(el => {
-        el.addEventListener('mouseenter', () => follower?.classList.add('hovering'));
-        el.addEventListener('mouseleave', () => follower?.classList.remove('hovering'));
-      });
     </script>
   </body>
 </html>
 
 <style is:global>
-  /* Custom Cursor */
-  * {
-    cursor: none !important; /* Hide default cursor everywhere */
+  /* Custom Cursor Fallback */
+  body.custom-cursor-active * {
+    cursor: none !important; /* Hide default cursor ONLY if JS works */
   }
+  
   .custom-cursor-follower {
     position: fixed;
     top: 0; left: 0;
@@ -89,17 +102,23 @@ const { title, description = "Lighting, Audio, and Video Engineering" } = Astro.
     background-color: #fff;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 99999;
+    z-index: 999999;
     mix-blend-mode: difference;
     transform: translate(-50%, -50%);
     transition: width 0.3s ease, height 0.3s ease;
+    opacity: 0; /* Hidden initially to prevent top-left flash */
   }
+
+  body.custom-cursor-active .custom-cursor-follower {
+    opacity: 1; /* Show once activated */
+  }
+
   .custom-cursor-follower.hovering {
     width: 80px; height: 80px;
   }
   
   @media (max-width: 768px) {
-    * { cursor: auto !important; }
-    .custom-cursor-follower { display: none; }
+    body.custom-cursor-active * { cursor: auto !important; }
+    .custom-cursor-follower { display: none !important; }
   }
 </style>

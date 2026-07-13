@@ -63,9 +63,11 @@ const tags = await Promise.all(
         {project.data.description && <p class="description">{project.data.description}</p>}
       </div>
 
-      <div class="content glass-panel animate-fade-in delay-200">
-        <Content />
-      </div>
+      {project.body && project.body.trim().length > 0 && (
+        <div class="content glass-panel animate-fade-in delay-200">
+          <Content />
+        </div>
+      )}
 
       {galleryImages.length > 0 && (
         <div class="gallery-section animate-fade-in delay-300">
